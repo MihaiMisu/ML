@@ -21,8 +21,8 @@ class NeuralNetwork:
         
         self._learning_rate = learning_rate
         
-        self._wih = normal(0.0, pow(self.inodes, -0.5), (self.hnodes, self.inodes))
-        self._who = normal(0.0, pow(self.hnodes, -0.5), (self.onodes, self.hnodes))
+        self._wih = normal(0.0, pow(self._input_nodes, -0.5), (self._hidden_nodes, self._input_nodes))
+        self._who = normal(0.0, pow(self._hidden_nodes, -0.5), (self._output_nodes, self._hidden_nodes))
     
     def set_input_nodes(self, input_nodes):
         self._input_nodes = input_nodes
@@ -84,10 +84,10 @@ class NeuralNetwork:
     def query(self, inputs):
         inputs = array(inputs, ndmin=2).T
         
-        out_hidden = dot(self.wih, inputs)
+        out_hidden = dot(self._wih, inputs)
         out_hidden = expit(out_hidden)
         
-        nn_out = dot(self.who, out_hidden)
+        nn_out = dot(self._who, out_hidden)
         nn_out = expit(nn_out)
         
         return nn_out
@@ -99,16 +99,14 @@ if __name__ == "__main__":
     nn.show_network_features()
     
     wih = array([
-            [-0.13633719,  0.61624086,  0.54912288],
-            [-0.05228535, -0.0593957 ,  0.61747629],
-            [-0.33880832,  0.22604528, -0.02312596]
-            ])
+            [-0.3763134 , -0.5486234 ,  0.12163167],
+            [ 0.18277464,  0.00545574,  0.40029351],
+            [ 0.05494157, -0.30964649,  0.16529363]])
     
     who = array([
-            [-0.26280821, -0.39603203,  0.34228423],
-            [-0.58585622,  0.28441407, -0.93537242],
-            [-0.57200599,  0.58440066, -0.13354788]
-            ])
+            [-0.07645497, -1.54035603,  1.16798749],
+            [-1.19954533, -0.1977093 , -0.0460765 ],
+            [ 0.21076346,  0.00827052, -0.47213663]])
     
     nn.set_wih(wih)
     nn.set_who(who)
