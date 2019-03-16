@@ -21,7 +21,9 @@ from git_nn import neuralNetwork as git_net
 
 training_file_name = "training_data/mnist_train_100.csv"
 training_file_name = "training_data/mnist_train.csv"
+
 testing_file_name = "test_data/mnist_test_10.csv"
+testing_file_name = "test_data/test_data.csv"
 
 wih_file_name = "my_net_wih.txt"
 who_file_name = "my_net_who.txt"
@@ -97,7 +99,7 @@ for record in testing_data:
     
     print(correct_label, "  ", nr)
 
-print(correct_result / output_nodes)
+print(correct_result / len(testing_data)*100)
 
 #with open(d.__str__().replace("\\", "/"), 'r') as data_file:
 #    data_line = data_file.readline()
