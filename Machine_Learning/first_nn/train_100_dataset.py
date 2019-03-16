@@ -20,6 +20,7 @@ from git_nn import neuralNetwork as git_net
 #%%
 
 training_file_name = "training_data/mnist_train_100.csv"
+training_file_name = "training_data/mnist_train.csv"
 testing_file_name = "test_data/mnist_test_10.csv"
 
 wih_file_name = "my_net_wih.txt"
@@ -55,7 +56,7 @@ input_nodes = 784
 hidden_nodes = 200
 output_nodes = 10
 
-learning_rate = 0.8
+learning_rate = 0.5
 
 network = NeuralNetwork(input_nodes=input_nodes,
                         hidden_nodes=hidden_nodes,
@@ -63,7 +64,7 @@ network = NeuralNetwork(input_nodes=input_nodes,
                         learning_rate=learning_rate)
 
 # TRAINING THE NETWORK
-epochs = 5
+epochs = 1
 
 for e in range(epochs):
     for record in training_data:
