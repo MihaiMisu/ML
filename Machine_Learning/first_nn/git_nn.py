@@ -2,6 +2,10 @@
 import numpy
 # scipy.special for the sigmoid function expit()
 import scipy.special
+import os
+
+from os.path import dirname, join
+from neural_network_v1 import NeuralNetwork as my_net
 
 # neural network class definition
 class neuralNetwork:
@@ -29,6 +33,11 @@ class neuralNetwork:
         
         pass
 
+    def get_wih(self):
+        return self.wih
+    
+    def get_who(self):
+        return self.who
     
     # train the neural network
     def train(self, inputs_list, targets_list):
@@ -77,19 +86,91 @@ class neuralNetwork:
         
         return final_outputs
 
+if __name__ == "__main__":
 
-# number of input, hidden and output nodes
-input_nodes = 3
-hidden_nodes = 3
-output_nodes = 3
+    # number of input, hidden and output nodes
+    input_nodes = 784
+    hidden_nodes = 200
+    output_nodes = 10
+    
+    # learning rate
+    learning_rate = 0.1
+    
+    # create instance of neural network
+    n = neuralNetwork(input_nodes,hidden_nodes,output_nodes, learning_rate)
+    n1 = my_net(input_nodes,hidden_nodes,output_nodes, learning_rate)
+    #print(n.__dict__)
+    #
+    #print(n.query([1.0, 0.5, -1.5]))
+    
+#    n1.set_wih(n.get_wih())
+#    n1.set_who(n.get_who())
+    
+    # load the mnist training data CSV file into a list
+    training_file_name = "training_data/mnist_train_100.csv"
+    path = dirname(os.getcwd())
+    path_to_training_file = join(path, training_file_name)
+    training_data_file = open(path_to_training_file.__str__().replace("\\", "/"),
+                              'r')
+    training_data_list = training_data_file.readlines()
+    training_data_file.close()
+    
+    epochs = 5
+    
+    for e in range(epochs):
+        for record in training_data_list:
+            # split the record by the ',' commas
+            all_values = record.split(',')
+            # scale and shift the inputs
+            inputs = (numpy.asfarray(all_values[1:]) / 255.0 * 0.99) + 0.01
+            # create the target output values (all 0.01, except the desired label which is 0.99)
+            targets = numpy.zeros(output_nodes) + 0.01
+            # all_values[0] is the target label for this record
+            targets[int(all_values[0])] = 0.99
+            n.train(inputs, targets)
+            n1.train(inputs, targets)
+            
+            pass
+        pass
 
-# learning rate is 0.3
-learning_rate = 0.3
-
-# create instance of neural network
-n = neuralNetwork(input_nodes,hidden_nodes,output_nodes, learning_rate)
-
-print(n.__dict__)
-
-print(n.query([1.0, 0.5, -1.5]))
-
+    
+    # load the mnist test data CSV file into a list
+    testing_file_name = "test_data/mnist_test_10.csv"
+    path_to_testing_file = join(path, testing_file_name)
+    test_data_file = open(path_to_testing_file, 'r')
+    test_data_list = test_data_file.readlines()
+    test_data_file.close()
+    
+    # test the neural network
+    
+    # scorecard for how well the network performs, initially empty
+    scorecard = []
+    
+    # go through all the records in the test data set
+    for record in test_data_list:
+        # split the record by the ',' commas
+        all_values = record.split(',')
+        # correct answer is first value
+        correct_label = int(all_values[0])
+        # scale and shift the inputs
+        inputs = (numpy.asfarray(all_values[1:]) / 255.0 * 0.99) + 0.01
+        # query the network
+        outputs = n.query(inputs)
+        outputs1 = n1.query(inputs)
+        # the index of the highest value corresponds to the label
+        label = numpy.argmax(outputs1)
+        # append correct or incorrect to list
+        print("expected: {}; got: {}".format(correct_label, label))
+        if (label == correct_label):
+            # network's answer matches correct answer, add 1 to scorecard
+            scorecard.append(1)
+        else:
+            # network's answer doesn't match correct answer, add 0 to scorecard
+            scorecard.append(0)
+            pass
+        
+    #    break
+        pass
+    
+    scorecard_array = numpy.asarray(scorecard)
+    print ("performance = ", scorecard_array.sum() / scorecard_array.size)

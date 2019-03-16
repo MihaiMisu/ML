@@ -10,14 +10,20 @@ Created on Wed Mar 13 22:30:51 2019
 import os
 
 from os.path import dirname, join
-from numpy import asfarray, asarray
+from numpy import asfarray, asarray, zeros, insert, where
 from matplotlib.pyplot import figure, close, plot, stem, xlabel, ylabel, title, imshow
+
+from neural_network_v1 import NeuralNetwork
+from git_nn import neuralNetwork as git_net
 
 #%% STATIC DEFINITIONS
 #%%
 
 training_file_name = "training_data/mnist_train_100.csv"
+testing_file_name = "test_data/mnist_test_10.csv"
 
+wih_file_name = "my_net_wih.txt"
+who_file_name = "my_net_who.txt"
 
 #%% FUNCTIONS
 #%%
@@ -31,18 +37,66 @@ def mapping(value_to_map, in_min, in_max, out_min, out_max):
 #%%
 
 path = dirname(os.getcwd())
+
 path_to_training_file = join(path, training_file_name)
+path_to_testing_file = join(path, testing_file_name)
 
-data_file = open(path_to_training_file.__str__().replace("\\", "/"), 'r')
-data_list = data_file.readlines()
-data_file.close()
+training_data_file = open(path_to_training_file.__str__().replace("\\", "/"),
+                          'r')
+training_data = training_data_file.readlines()
+training_data_file.close()
 
-values = data_list[5].split(",")
-image_array = asfarray(values[1:]).reshape((28, 28))
-#imshow(image_array, cmap="Greys", interpolation="None")
+testing_data_file = open(path_to_testing_file.__str__().replace("\\", "/"),
+                          'r')
+testing_data = testing_data_file.readlines()
+testing_data_file.close()
 
-for l in range(len(data_list)):
-    data_list[l] = mapping(asfarray(data_list[l].split(",")), 0, 255, 0.01, 1)
+input_nodes = 784
+hidden_nodes = 200
+output_nodes = 10
+
+learning_rate = 0.8
+
+network = NeuralNetwork(input_nodes=input_nodes,
+                        hidden_nodes=hidden_nodes,
+                        output_nodes=output_nodes,
+                        learning_rate=learning_rate)
+
+# TRAINING THE NETWORK
+epochs = 5
+
+for e in range(epochs):
+    for record in training_data:
+        # split the record by the ',' commas
+        all_values = record.split(',')
+        # scale and shift the inputs
+        inputs = (asfarray(all_values[1:]) / 255.0 * 0.99) + 0.01
+        # create the target output values (all 0.01, except the desired label which is 0.99)
+        targets = zeros(output_nodes) + 0.01
+        targets[int(all_values[0])] = 0.99
+        
+        network.train(inputs, targets)
+
+# TESTING THE NETWORK
+correct_result = 0
+for record in testing_data:
+    # split the record by the ',' commas
+    all_values = record.split(',')
+    # correct answer is first value
+    correct_label = int(all_values[0])
+    # scale and shift the inputs
+    inputs = (asfarray(all_values[1:]) / 255.0 * 0.99) + 0.01
+    
+    output = network.query(inputs)
+    
+    nr = where(output == max(output))[0][0]
+    
+    if correct_label == nr:
+        correct_result += 1
+    
+    print(correct_label, "  ", nr)
+
+print(correct_result / output_nodes)
 
 #with open(d.__str__().replace("\\", "/"), 'r') as data_file:
 #    data_line = data_file.readline()
@@ -53,3 +107,11 @@ for l in range(len(data_list)):
 #            data_line = data_file.__next__()
 #    except StopIteration:
 #        print("gata")
+
+
+#%% DELETE
+#%%
+
+del path, training_data_file, path_to_testing_file
+del input_nodes, hidden_nodes, output_nodes, learning_rate
+del path_to_training_file, testing_file_name, training_file_name

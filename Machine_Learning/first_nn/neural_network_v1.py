@@ -24,6 +24,8 @@ class NeuralNetwork:
         self._wih = normal(0.0, pow(self._input_nodes, -0.5), (self._hidden_nodes, self._input_nodes))
         self._who = normal(0.0, pow(self._hidden_nodes, -0.5), (self._output_nodes, self._hidden_nodes))
     
+        self.activation_function = lambda x: expit(x)
+            
     def set_input_nodes(self, input_nodes):
         self._input_nodes = input_nodes
     
@@ -65,32 +67,49 @@ class NeuralNetwork:
         return self.__dict__
         
     def train(self, inputs, expected_outputs):
+        
         inputs = array(inputs, ndmin=2).T
         expected_outputs = array(expected_outputs, ndmin=2).T
         
-        hidden_inputs = dot(self.wih, inputs)
+        hidden_inputs = dot(self._wih, inputs)
         hidden_outputs = expit(hidden_inputs)
-        
-        outputs_input = dot(self.who, hidden_outputs)
+
+        outputs_input = dot(self._who, hidden_outputs)
         outputs_output = expit(outputs_input)
         
         output_errors = expected_outputs - outputs_output
-        hidden_errors = dot(self.who.T, output_errors) 
+        hidden_errors = dot(self._who.T, output_errors) 
         
-        self.who += self.lr * dot((output_errors * outputs_output * (1.0 - outputs_output)), transpose(hidden_outputs))
+        self._who += self._learning_rate * dot((output_errors * outputs_output * (1.0 - outputs_output)), transpose(hidden_outputs))
         
-        self.wih += self.lr * dot((hidden_errors * hidden_outputs * (1.0 - hidden_outputs)), transpose(inputs))        
+        self._wih += self._learning_rate * dot((hidden_errors * hidden_outputs * (1.0 - hidden_outputs)), transpose(inputs))        
 
     def query(self, inputs):
         inputs = array(inputs, ndmin=2).T
         
         out_hidden = dot(self._wih, inputs)
-        out_hidden = expit(out_hidden)
+        out_hidden = self.activation_function(out_hidden)
         
         nn_out = dot(self._who, out_hidden)
-        nn_out = expit(nn_out)
+        nn_out = self.activation_function(nn_out)
         
         return nn_out
+    
+    def query_2(self, inputs_list):
+        # convert inputs list to 2d array
+        inputs = array(inputs_list, ndmin=2).T
+        
+        # calculate signals into hidden layer
+        hidden_inputs = dot(self._wih, inputs)
+        # calculate the signals emerging from hidden layer
+        hidden_outputs = self.activation_function(hidden_inputs)
+        
+        # calculate signals into final output layer
+        final_inputs = dot(self._who, hidden_outputs)
+        # calculate the signals emerging from final output layer
+        final_outputs = self.activation_function(final_inputs)
+        
+        return final_outputs
     
 if __name__ == "__main__":
     
