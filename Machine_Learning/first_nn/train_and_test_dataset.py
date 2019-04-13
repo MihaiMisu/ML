@@ -2,7 +2,7 @@
 """
 Created on Wed Mar 13 22:30:51 2019
 
-@author: Mihai-PC
+@author: Mihai
 """
 
 #%% IMPORTS
@@ -107,7 +107,7 @@ for record in testing_data:
     if correct_label == nr:
         correct_result += 1
     
-#    print(correct_label, "  ", nr)
+
 # --------------------------------------------
 
 print("Detection rate: {} %".format(correct_result / len(testing_data)*100))
