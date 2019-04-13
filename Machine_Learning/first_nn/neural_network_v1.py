@@ -4,7 +4,7 @@ https://github.com/makeyourownneuralnetwork/makeyourownneuralnetwork/blob/master
 '''
 
 from numpy.random import normal
-from numpy import dot, array, transpose
+from numpy import dot, array, transpose, savetxt, loadtxt
 from scipy.special import expit
 
 class NeuralNetwork:
@@ -110,6 +110,16 @@ class NeuralNetwork:
         final_outputs = self.activation_function(final_inputs)
         
         return final_outputs
+    
+    def save_coeffs_to_file(self, file_name,  extension):
+        
+        savetxt(file_name + "_wih" + extension, self._wih, delimiter=",")
+        savetxt(file_name + "_who" + extension, self._who, delimiter=",")
+    
+    def load_coeffs_from_file(self, wih_file, who_file):
+        
+        self._wih = loadtxt(wih_file, float, delimiter=",")
+        self._who = loadtxt(who_file, float, delimiter=",")
     
 if __name__ == "__main__":
     
