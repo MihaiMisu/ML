@@ -30,11 +30,11 @@ It is required that the structure of the folders to be like the next one:
                 - mnist_train.csv
 """
 
-training_file_name = "first_nn/training_data/mnist_train_100.csv"
-#training_file_name = "first_nn/training_data/mnist_train.csv"
+#training_file_name = "first_nn/training_data/mnist_train_100.csv"
+training_file_name = "first_nn/training_data/mnist_train.csv"
 
-testing_file_name = "first_nn/test_data/mnist_test_10.csv"
-#testing_file_name = "first_nn/test_data/mnist_test.csv"
+#testing_file_name = "first_nn/test_data/mnist_test_10.csv"
+testing_file_name = "first_nn/test_data/mnist_test.csv"
 
 wih_file_name = "my_net_wih.txt"
 who_file_name = "my_net_who.txt"
@@ -68,7 +68,7 @@ input_nodes = 784
 hidden_nodes = 100
 output_nodes = 10
 
-learning_rate = 0.3
+learning_rate = 0.2
 
 network = NeuralNetwork(input_nodes=input_nodes,
                         hidden_nodes=hidden_nodes,
@@ -91,8 +91,10 @@ for e in range(epochs):
         network.train(inputs, targets)
 # --------------------------------------------
 
-network.save_coeffs_to_file("coefs", ".txt")
-network.load_coeffs_from_file(wih_file="coefs_wih.txt", who_file="coefs_who.txt")
+print("Done training. Saving model's coefficients to ")
+network.save_coeffs_to_file("coefs", ".csv")
+network.load_coeffs_from_file(wih_file="coefs_wih.csv",
+                              who_file="coefs_who.csv")
 
 # --------- TESTING THE NETWORK --------------
 correct_result = 0
