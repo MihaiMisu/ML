@@ -12,6 +12,12 @@ X = dataset.iloc[:, 3:13].values
 y = dataset.iloc[:, 13].values
 
 #%% Encoding categorical data
+"""
+    Important step - each string must be encoded to a number format to be 
+undestood by the model. This is accomplished by LabelEncoder and OneHotEncoder
+class from sklearn.preprocessing module.
+**IMPORTANT: the rest of the data remains as it was
+"""
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 labelencoder_X_1 = LabelEncoder()
 X[:, 1] = labelencoder_X_1.fit_transform(X[:, 1])
@@ -26,6 +32,11 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
 
 #%% Feature Scaling
+"""
+    Inside the training data can be big numbers and there is no point to keep
+the memory occupied without a good reason so a scaling operation is done on
+the input data
+"""
 from sklearn.preprocessing import StandardScaler
 sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
@@ -33,6 +44,10 @@ X_test = sc.transform(X_test)
 
 #%% Fitting classifier to the Training set
 # Create your classifier here
+"""
+    Declare and run the structure of the ANN. For this case it is declared 3 
+hidden layers and for each is set an activation function.
+"""
 import keras
 from keras.models import Sequential
 from keras.layers import Dense
@@ -58,14 +73,6 @@ cm = confusion_matrix(y_test, y_pred)
 acc = (cm[0,0] + cm[1,1]) / cm.sum()
 
 #%% Homework
-from numpy import array
-single_input = array([[600, "France", "Male", 40, 3, 60000, 2, 1, 1, 50000]], dtype=object)
-
-hw_label_encoder_1 = LabelEncoder()
-hw_label_encoder_2 = LabelEncoder()
-hw_input = hw_label_encoder_1.fit_transform(single_input[1])
-hw_input = hw_label_encoder_2.fit_transform(single_input[2])
-hw_input = onehotencoder.fit_transform(hw_input).toarray()
 
 hw_input = array([[0, 0, 600, 1, 40, 3, 60000, 2, 1, 1, 50000]])
 hw_input = sc.transform(hw_input)
@@ -75,6 +82,10 @@ new_pred = new_predict > 0.5
 
 #%% Evaluation the ANN
 # Implement K-Fold cross validation
+"""
+    K-Fold validation is a technique to find the accurancy and variance of the
+defined model to measure it's preformances (don't work as expected).
+"""
 
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import cross_val_score
