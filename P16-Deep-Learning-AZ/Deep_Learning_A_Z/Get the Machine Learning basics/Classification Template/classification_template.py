@@ -51,10 +51,12 @@ hidden layers and for each is set an activation function.
 import keras
 from keras.models import Sequential
 from keras.layers import Dense
-
+from keras.layers import Dropout
 
 classifier = Sequential()
 classifier.add(Dense(output_dim=6, init="uniform", activation="relu", input_dim=11))
+classifier.add(Dropout(p=0.1))
+
 classifier.add(Dense(output_dim=6, init="uniform", activation="relu"))
 classifier.add(Dense(output_dim=1, init="uniform", activation="sigmoid"))
 
@@ -74,7 +76,7 @@ acc = (cm[0,0] + cm[1,1]) / cm.sum()
 
 #%% Homework
 
-hw_input = array([[0, 0, 600, 1, 40, 3, 60000, 2, 1, 1, 50000]])
+hw_input = np.array([[0, 0, 600, 1, 40, 3, 60000, 2, 1, 1, 50000]])
 hw_input = sc.transform(hw_input)
 
 new_predict = classifier.predict(hw_input)
@@ -106,6 +108,38 @@ accuracies = cross_val_score(estimator=classifier, X=X_train, y=y_train, cv=10)
 
 mean = accuracies.mean()
 variance = accuracies.std()
+
+#%% Tuning the ANN
+
+from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.model_selection import GridSearchCV
+from keras.models import Sequential
+from keras.layers import Dense
+
+def build_classifier(optimizer="adam"):
+    classifier = Sequential()
+    classifier.add(Dense(output_dim=6, init="uniform", activation="relu", input_dim=11))
+    classifier.add(Dense(output_dim=6, init="uniform", activation="relu"))
+    classifier.add(Dense(output_dim=1, init="uniform", activation="sigmoid"))    
+    classifier.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+
+    return classifier    
+
+classifier = KerasClassifier(build_fn=build_classifier)
+
+optimizable_params = {
+        "batch_size": [25, 32],
+        "nb_epoch": [100, 500],
+        "optimizer": ["adam", "rmsprop"]}
+
+grid_search = GridSearchCV(estimator=classifier,
+                           param_grid=optimizable_params,
+                           scoring="accuracy",
+                           cv=10)
+
+grid_search = grid_search.fit(X_train, y_train)
+best_parameters = grid_search.best_params_
+best_accuracy = grid_search.best_score_
 
 #%%
 # Visualising the Training set results
