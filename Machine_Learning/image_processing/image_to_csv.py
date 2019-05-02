@@ -19,9 +19,9 @@ relative_path_to_model_wih = "first_nn/coefs_wih.csv"
 relative_path_to_model_who = "first_nn/coefs_who.csv"
 
 image_file_name = "1.jpg"
-image_file_name = "1_pinta.png"
-image_file_name = "2_pinta.png"
-image_file_name = "3_pinta.png"
+#image_file_name = "1_pinta.png"
+#image_file_name = "2_pinta.png"
+#image_file_name = "3_pinta.png"
 image_file_name = "2.jpg"
 
 height = 28
@@ -56,8 +56,8 @@ if __name__ == "__main__":
     
     grey_image = cv2.cvtColor(image_data, cv2.COLOR_BGR2GRAY)
     image_width, image_heigh = grey_image.shape[:2]
+    rescaled_image = adjust_black_to_white_ratio(grey_image, 166)
     rescaled_image = cv2.resize(grey_image, (width, height), interpolation=cv2.INTER_AREA)
-    rescaled_image = adjust_black_to_white_ratio(rescaled_image, 166)
     
     rescaled_image_resized = 255.0 - rescaled_image.reshape(784).astype(float)
     rescaled_image_resized = (rescaled_image_resized / 255.0 * 0.99) + 0.01
