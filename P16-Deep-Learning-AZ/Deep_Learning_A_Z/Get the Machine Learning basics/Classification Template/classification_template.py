@@ -96,14 +96,14 @@ from keras.layers import Dense
 
 def build_classifier():
     classifier = Sequential()
-    classifier.add(Dense(output_dim=6, init="uniform", activation="relu", input_dim=11))
-    classifier.add(Dense(output_dim=6, init="uniform", activation="relu"))
-    classifier.add(Dense(output_dim=1, init="uniform", activation="sigmoid"))    
+    classifier.add(Dense(output_dim=6, kernel_initializer="uniform", activation="relu", input_dim=11))
+    classifier.add(Dense(output_dim=6, kernel_initializer="uniform", activation="relu"))
+    classifier.add(Dense(output_dim=1, kernel_initializer="uniform", activation="sigmoid"))    
     classifier.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
 
     return classifier    
 
-classifier = KerasClassifier(build_fn=build_classifier, batch_size=10, nb_epoch=100)
+classifier = KerasClassifier(build_fn=build_classifier, batch_size=10, epochs=100)
 accuracies = cross_val_score(estimator=classifier, X=X_train, y=y_train, cv=10)
 
 mean = accuracies.mean()
@@ -118,9 +118,9 @@ from keras.layers import Dense
 
 def build_classifier(optimizer="adam"):
     classifier = Sequential()
-    classifier.add(Dense(output_dim=6, init="uniform", activation="relu", input_dim=11))
-    classifier.add(Dense(output_dim=6, init="uniform", activation="relu"))
-    classifier.add(Dense(output_dim=1, init="uniform", activation="sigmoid"))    
+    classifier.add(Dense(output_dim=6, kernel_initializer="uniform", activation="relu", input_dim=11))
+    classifier.add(Dense(output_dim=6, kernel_initializer="uniform", activation="relu"))
+    classifier.add(Dense(output_dim=1, kernel_initializer="uniform", activation="sigmoid"))    
     classifier.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
 
     return classifier    
@@ -129,7 +129,7 @@ classifier = KerasClassifier(build_fn=build_classifier)
 
 optimizable_params = {
         "batch_size": [25, 32],
-        "nb_epoch": [100, 500],
+        "epochs": [100, 500],
         "optimizer": ["adam", "rmsprop"]}
 
 grid_search = GridSearchCV(estimator=classifier,
