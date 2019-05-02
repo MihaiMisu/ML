@@ -62,7 +62,7 @@ classifier.add(Dense(output_dim=1, init="uniform", activation="sigmoid"))
 
 classifier.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
 
-classifier.fit(X_train, y_train, batch_size=10, nb_epoch=100)
+classifier.fit(X_train, y_train, batch_size=20, nb_epoch=100)
 
 #%% Predicting the Test set results
 y_pred = classifier.predict(X_test)
