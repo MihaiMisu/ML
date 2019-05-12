@@ -9,14 +9,55 @@
 # Installing Keras
 # pip install --upgrade keras
 
-# Part 1 - Building the CNN
-
+#%% Part 1 - Building the CNN
+#%%
 # Importing the Keras libraries and packages
+# used to implement the ANN
 from keras.models import Sequential
+# used to implement the convolution step; 2D - since we are working with images
+# which are 2d objects
 from keras.layers import Conv2D
+# to add the puling layers
 from keras.layers import MaxPooling2D
+# to create the 1d array which will be feeded to the ANN
 from keras.layers import Flatten
+# add fully connected layers
 from keras.layers import Dense
+
+#%% Part 2 - initializing the CNN
+#%%
+
+classifier = Sequential()
+
+# Step 1 - convolution: added the first layer whose attribution is to do the
+# convolution operation. Specified as arguments: the no feature maps, 
+# dimensions of the feature to convolve with, input shape of the input data and
+# the activation function
+classifier.add(Conv2D(32, (3, 3), input_shape=(64, 64, 3), activation="relu"))
+
+# Step 2 - max pooling: reducing the dimension of the feature map => pooling
+# layer. In this way we reduce the no flattened layer
+classifier.add(MaxPooling2D(pool_size=(2, 2))) 
+
+# Step 3 - flatteneing: taking all the pooled feature maps and reorganise it
+# into a single 1d vector which will be feeded to the fully connected network
+classifier.add(Flatten())
+
+# Step 4 - build the ANN and input the flattened vector to it
+classifier.add(Dense(output_dim=128, activation="relu"))
+classifier.add(Dense(output_dim=1, activation="sigmoid"))
+
+# Compiling the CNN: optimizer - adam=stochastic descendent algorithm
+classifier.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
+
+
+
+
+
+
+
+
+
 
 # Initialising the CNN
 classifier = Sequential()
