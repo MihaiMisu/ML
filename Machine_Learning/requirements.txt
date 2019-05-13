@@ -4,3 +4,4 @@ scipy==1.2.1
 scikit-learning
 keras
 tensorflow
+Pillow==6.0.0
