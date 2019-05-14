@@ -68,14 +68,14 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 training_set = train_datagen.flow_from_directory('dataset/training_set',
-                                                    target_size=(64, 64),
-                                                    batch_size=64,
-                                                    class_mode='binary')
+                                                 target_size=(64, 64),
+                                                 batch_size=64,
+                                                 class_mode='binary')
 
 test_set = test_datagen.flow_from_directory('dataset/test_set',
-                                                        target_size=(64, 64),
-                                                        batch_size=64,
-                                                        class_mode='binary')
+                                            target_size=(64, 64),
+                                            batch_size=64,
+                                            class_mode='binary')
 
 classifier.fit_generator(training_set,
                          steps_per_epoch=8000,
@@ -83,9 +83,17 @@ classifier.fit_generator(training_set,
                          validation_data=test_set,
                          validation_steps=2000)
 
-classifier.
+from numpy import expand_dims
+from keras.preprocessing import image
 
-
+single_test_image = image.load_img("dataset/single_prediction/cat_or_dog_1.jpg",
+                                   target_size=(64, 64))
+single_test_image = image.load_img("dataset/single_prediction/cat_or_dog_6.jpg",
+                                   target_size=(64, 64))
+single_test_image = image.img_to_array(single_test_image)
+single_test_image = expand_dims(single_test_image, axis=0)
+prediction_res = classifier.predict(single_test_image)
+prediction = "dog" if prediction_res[0][0] == 1 else "cat"
 
 
 
