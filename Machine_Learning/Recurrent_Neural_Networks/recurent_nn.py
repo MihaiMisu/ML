@@ -2,10 +2,10 @@
 
 #%%     Importing section
 #%%
-from numpy import array, reshape
+from numpy import (array, reshape)
 from matplotlib.pyplot import (close, figure, plot, stem, subplot, title, 
-                               xlabel, ylabel)
-from pandas import read_csv, concat
+                               xlabel, ylabel, grid, legend)
+from pandas import (read_csv, concat)
 
 
 #%%     Import the training set
@@ -73,9 +73,33 @@ regression.fit(X_train, y_train, epochs=100, batch_size=32)
 
 total_dataset = concat((train_dataframe["Open"], test_dataframe["Open"]), axis=0)
 
+inputs = total_dataset[len(total_dataset) - len(test_dataset) - 60:].values
+inputs = inputs.reshape(-1, 1)  # obtain 80 lines and one column
+inputs = scale.transform(inputs)
 
+X_test = [];
 
+for i in range(60, len(inputs)):
+    X_test.append(inputs[i-60:i, 0])
+X_test = array(X_test)
 
+X_test = reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+
+#making the predictions
+predicted_values = regression.predict(X_test)
+predicted_values = scale.inverse_transform(predicted_values)  # obtain unscaled values
+
+#%%     Viewing the results
+#%%
+
+close("all")
+
+plot(test_dataset, "r", label="Real Google stock price")
+plot(predicted_values, "b", label="Predicted Google stock price")
+
+title("Google Stock Price Prediction"); xlabel("Time"); ylabel("Stock Value")
+legend()
+grid()
 
 
 
