@@ -41,5 +41,14 @@ show()
 
 # Finding the frauds
 mappings = som.win_map(X)
-frauds = np.concatenate((mappings[(8,1)], mappings[(6,8)]), axis = 0)
+frauds = np.concatenate((mappings[(3, 6)], mappings[(4,5)]), axis = 0)
 frauds = sc.inverse_transform(frauds)
+
+# matrix of features: which are all the data found in the dataset, but not the first column since the ID has no value
+customers = dataset.iloc[: , 1:].values
+
+# matrix of dependent variables - used to make the corelations between the input and the output to train the ANN
+approvals = [1 if j in frauds[:, 0] else 0 for j in dataset.iloc[:, 0].values.astype(float)]
+
+
+
