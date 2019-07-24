@@ -41,14 +41,45 @@ show()
 
 # Finding the frauds
 mappings = som.win_map(X)
-frauds = np.concatenate((mappings[(3, 6)], mappings[(4,5)]), axis = 0)
+frauds = np.concatenate((mappings[(8, 7)], mappings[(2, 7)]), axis = 0)
 frauds = sc.inverse_transform(frauds)
 
 # matrix of features: which are all the data found in the dataset, but not the first column since the ID has no value
 customers = dataset.iloc[: , 1:].values
 
 # matrix of dependent variables - used to make the corelations between the input and the output to train the ANN
-approvals = [1 if j in frauds[:, 0] else 0 for j in dataset.iloc[:, 0].values.astype(float)]
+approvals = np.array([1 if j in frauds[:, 0] else 0 for j in dataset.iloc[:, 0].values], dtype=float)
 
 
+# --------------------------------------------------
 
+# Feature Scaling
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+customers = sc.fit_transform(customers)
+
+# Part 2 - Now let's make the ANN!
+
+# Importing the Keras libraries and packages
+from keras.models import Sequential
+from keras.layers import Dense
+
+# Initialising the ANN
+classifier = Sequential()
+
+# Adding the input layer and the first hidden layer
+classifier.add(Dense(units = 2, kernel_initializer = 'uniform', activation = 'relu', input_dim = 15))
+
+# Adding the output layer
+classifier.add(Dense(units = 1, kernel_initializer = 'uniform', activation = 'sigmoid'))
+
+# Compiling the ANN
+classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
+
+# Fitting the ANN to the Training set
+classifier.fit(customers, approvals, batch_size = 1, epochs = 2)
+
+# Part 3 - Making predictions and evaluating the model
+
+# Predicting the Test set results
+y_pred = classifier.predict(X_test)
