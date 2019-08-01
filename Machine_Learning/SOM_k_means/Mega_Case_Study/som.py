@@ -41,7 +41,7 @@ show()
 
 # Finding the frauds
 mappings = som.win_map(X)
-frauds = np.concatenate((mappings[(8, 7)], mappings[(2, 7)]), axis = 0)
+frauds = np.concatenate((mappings[(6, 5)], mappings[(7, 5)]), axis = 0)
 frauds = sc.inverse_transform(frauds)
 
 # matrix of features: which are all the data found in the dataset, but not the first column since the ID has no value
@@ -81,5 +81,19 @@ classifier.fit(customers, approvals, batch_size = 1, epochs = 2)
 
 # Part 3 - Making predictions and evaluating the model
 
-# Predicting the Test set results
-y_pred = classifier.predict(X_test)
+# Predicting the probabilities of frauds
+y_pred = classifier.predict(customers)
+y_pred = y_pred*100
+
+customers_cheat_prob = np.concatenate((dataset.iloc[:, 0:1], y_pred), axis=1)
+customers_cheat_prob = customers_cheat_prob[customers_cheat_prob[:, 1].argsort()]
+
+
+
+
+
+
+
+
+
+
