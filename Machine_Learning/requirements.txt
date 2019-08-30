@@ -6,3 +6,4 @@ keras
 tensorflow
 Pillow==6.0.0
 pandas==0.24.2
+mtcnn==0.0.9

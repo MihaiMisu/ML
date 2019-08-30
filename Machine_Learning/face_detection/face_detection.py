@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+#%%   FACE DETECTION USING openCV - ALGORITHMS
+#%%
 from cv2 import CascadeClassifier, imread, rectangle, imshow, destroyAllWindows, waitKey
 from os import getcwd
 
@@ -27,6 +29,41 @@ imshow('face detection', pixels)
 waitKey(0)
 # close the window
 destroyAllWindows()
+
+
+#%%   FACE DETECTION USING DEEP LEARNING
+#%%
+	
+# face detection with mtcnn on a photograph
+from matplotlib import pyplot
+from matplotlib.pyplot import Rectangle
+from mtcnn.mtcnn import MTCNN
+# load image from file
+filename = 'test2.jpg'
+pixels = pyplot.imread(filename)
+# create the detector, using default weights
+detector = MTCNN()
+# detect faces in the image
+faces = detector.detect_faces(pixels)
+for face in faces:
+
+    pyplot.imshow(pixels)    
+    ax = pyplot.gca()
+    # get coordinates
+    x, y, width, height = face['box']
+    # create the shape
+    rect = Rectangle((x, y), width, height, fill=False, color='red')
+    ax.add_patch(rect)
+
+pyplot.show()
+
+
+
+
+
+
+
+
 
 
 
