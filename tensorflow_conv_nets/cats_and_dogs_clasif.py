@@ -2,6 +2,7 @@
 
 #%%
 import time
+import matplotlib.pyplot as plt
 
 from os import listdir, walk, getcwd
 from os.path import isdir, isfile, join, relpath
@@ -46,9 +47,10 @@ def track_func(f):
     def inner(*args, **kwargs):
         print("Entering: {f.__name__}")
         start_time = time.perf_counter()
-        f(*args, **kwargs)
+        res = f(*args, **kwargs)
         end_time = time.perf_counter()
-        print(F"Exiting: {f.__name__} ({end_time - start_time})") 
+        print(F"Exiting: {f.__name__} ({end_time - start_time})")
+        return res
     return inner
 
 def get_files_nr_from_path(path):
@@ -113,7 +115,7 @@ def prepare_jpeg_images(path, split_percentage=0) -> Tuple[Generator, Generator]
             subset="training")
     validation_data = datagen.flow_from_directory(
             path,
-            target_size=(150, 150), 
+            target_size=(150, 150),
             batch_size=20,
             class_mode='binary',
             subset="validation")
@@ -132,13 +134,40 @@ test_dogs = get_files_name_from_path(dogs_test_set_path)
 train_gen, validation_gen = prepare_jpeg_images(training_set_path, 0.5)
 
 model = build_model()
-history = model.fit_generator(
+history2 = model.fit_generator(
         train_gen,
         steps_per_epoch=200,
-        epochs=3,
+        epochs=25,
         validation_data=validation_gen,
         validation_steps=50)
 model.save('cats_and_dogs_small_1.h5')
+
+#%%
+#%%
+
+history_of_net_train = {
+        "history1": {"details": "Net trained for only 15 epochs",
+                     "history": history},
+        "history2": {"details": "Net trained for 25 epochs",
+                     "history": history2}
+    }
+
+acc = history_of_net_train.get("history2", {}).get("history", object).history['acc']
+val_acc = history_of_net_train.get("history2", {}).get("history", object).history['val_acc']
+loss = history_of_net_train.get("history2", {}).get("history", object).history['loss']
+val_loss = history_of_net_train.get("history2", {}).get("history", object).history['val_loss']
+epochs = range(1, len(acc) + 1)
+plt.plot(epochs, acc, 'bo', label='Training acc')
+plt.plot(epochs, val_acc, 'b', label='Validation acc')
+plt.title('Training and validation accuracy')
+plt.legend()
+plt.figure()
+plt.plot(epochs, loss, 'bo', label='Training loss')
+plt.plot(epochs, val_loss, 'b', label='Validation loss')
+plt.title('Training and validation loss')
+plt.legend()
+plt.show()
+
 
 #%%
 #%%
