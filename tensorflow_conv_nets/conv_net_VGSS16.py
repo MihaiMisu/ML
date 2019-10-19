@@ -59,7 +59,7 @@ def build_dense_model() -> DenseNet:
     model.add(layers.Dropout(0.5))
     model.add(layers.Dense(1, activation='sigmoid'))
     model.compile(optimizer=optimizers.RMSprop(lr=2e-5),
-                  loss='binary_crosse',
+                  loss='binary_crossentropy',
                   metrics=['acc'])
     print(model.summary())
     
@@ -72,7 +72,7 @@ def build_dense_model() -> DenseNet:
 conv_base = VGG16(weights='imagenet',
                   include_top=False,
                   input_shape=(150, 150, 3))
-#conv_base.trainable = False
+conv_base.trainable = False
 print(conv_base.summary())
 
 train_feat, train_labels = extract_features_from_path(conv_base, train_set_path, 2000)
@@ -90,8 +90,43 @@ history = model.fit(train_feat, train_labels,
                     validation_data=(valid_feat, valid_labels))
 
 
+#   Fine tunning
 
+datagen = ImageDataGenerator(rescale=1./255)
 
+data = datagen.flow_from_directory(
+        train_set_path,
+        target_size=(150, 150),
+        batch_size=20,
+        class_mode='binary')
+valid_data = datagen.flow_from_directory(
+        validation_set_path,
+        target_size=(150, 150),
+        batch_size=20,
+        class_mode='binary')
+
+conv_base.trainable = True
+set_trainable = False
+for layer in conv_base.layers:
+    if layer.name == 'block5_conv1':
+        set_trainable = True
+if set_trainable:
+    layer.trainable = True
+else:
+    layer.trainable = False
+
+new_model = models.Sequential()
+new_model.add(conv_base)
+new_model.add(layers.Flatten())
+new_model.add(model)
+new_model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=1e-5), metrics=['acc'])
+
+history = new_model.fit_generator(
+        data,
+        steps_per_epoch=300,
+        epochs=50,
+        validation_data=valid_data,
+        validation_steps=100)
 
 
 
@@ -104,6 +139,8 @@ val_acc = history.history['val_acc']
 loss = history.history['loss']
 val_loss = history.history['val_loss']
 epochs = range(1, len(acc) + 1)
+
+close("all")
 plot(epochs, acc, 'bo', label='Training acc')
 plot(epochs, val_acc, 'b', label='Validation acc')
 title('Training and validation accuracy')
