@@ -60,9 +60,10 @@ print(first_layer_output.shape)
 
 close("all")
 
-imshow(img_tensor[0])
-matshow(first_layer_output[0, :, :, 7], cmap='viridis')
-show()
+#   use this plot to see as output only one image from a specific layer and position whithin the feature map from that layer
+#imshow(img_tensor[0])
+#matshow(first_layer_output[0, :, :, 7], cmap='viridis')
+#show()
 
 layer_names = []
 for layer in model.layers[:8]:
@@ -94,8 +95,19 @@ for layer_name, layer_activation in zip(layer_names, activations):
     grid(False)
     imshow(display_grid, aspect='auto', cmap='viridis')
 
-
-
+'''
+Observations:
+    -> the first layers (usually 1 to 3) are edge detectors. At this stage, the activations retain almost all of the information
+    from the initial picture
+    
+    -> as you go higher, the information will be more abstract and won't have much relevance to the human eye. Higher representation
+    carry increasingly more info related to the class of the image. With each layer we go upper in the network, the more info about
+    neighbours we have, so we can say that this kind of processing correlates different items from a spatial range within the image
+    
+    -> as we go to the last layer, we might notice that some of the images are blank. That's the case when the convolution between a
+    filter and the image returned 0
+'''
+    
 
 
 
