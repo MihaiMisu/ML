@@ -30,6 +30,7 @@ model_to_load = "cats_and_dogs_small_2.h5"
 #%%    Main Section
 #%%
 
+
 model = load_model(model_to_load)
 print(model.summary())
 
