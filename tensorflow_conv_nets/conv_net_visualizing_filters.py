@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 '''
-This script is made to visualize how a filter look like and what is its activation patters
+This script is made to visualize how a filter look like and what is its activation patters.
+
+    By plotting the result it can be observed that the first layers filters act like edge,
+curved lines and many other forms detector. Middle range filters encode simple textures
+made from combinations of edge and colors (got from the filters from bellow). As we go to
+an upper layer we will see more complex plots. These ones resembles textures found in natural
+images like feathers, eyes, leaves etc.
 '''
 
 from keras import backend as K
@@ -75,10 +81,11 @@ imshow(image_generated)
 
 #%% Multi image subplot
 
-layer_name = 'block1_conv1'
+
+layer_name = 'block4_conv1'
 size = 32
-rows_nr = 4
-col_nr = 4
+rows_nr = 8
+col_nr = 8
 
 # TODO: find a nother way to plot a single image, not NR_ROW*NR_COL
 close("all")
