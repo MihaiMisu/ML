@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+t# -*- coding: utf-8 -*-
 '''
 This script is made to visualize how a filter look like and what is its activation patters.
 
