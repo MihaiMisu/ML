@@ -13,7 +13,7 @@ from keras.datasets import imdb
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Embedding
 from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+from keras.preprocessing.sequence import pad_sequences as k_padding
 
 from numpy import zeros, ndarray
 from string import printable
@@ -85,6 +85,27 @@ def tokenize_using_keras(text: list, words_nr):
     return word_index
 
 
+def word_embedding_network():
+    '''
+    Function to return only a network for work embeding.
+    This is a trivial example of how an input space is beaing 'learnt' by the
+    network. One drawback for example is the fact that 'this mobie is a bomb'
+    is treated the same as 'this movie is the bomb' - which is wrong.
+    '''
+    model = Sequential()
+    model.add(Embedding(max_features, 8, input_length=max_len))  # why 8???
+
+    model.add(Flatten())
+
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(optimizer='rmsprop',
+                  loss='binary_crossentropy',
+                  metrics=['acc'])
+    model.summary()
+
+    return model
+
+
 def tokenize_using_hash(text: list):
     '''
     '''
@@ -113,20 +134,10 @@ max_features = 10000
 max_len = 20
 (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=max_features)
 
-x_train = pad_sequences(x_train, maxlen=max_len)
-x_test = pad_sequences(x_test, maxlen=max_len)
+x_train = k_padding(x_train, maxlen=max_len)
+x_test = k_padding(x_test, maxlen=max_len)
 
-model = Sequential()
-model.add(Embedding(max_features, 8, input_length=max_len))  # why 8???
-
-model.add(Flatten())
-
-model.add(Dense(1, activation='sigmoid'))
-model.compile(optimizer='rmsprop',
-              loss='binary_crossentropy',
-              metrics=['acc'])
-model.summary()
-
+model = word_embedding_network()
 history = model.fit(x_train, y_train,
                     epochs=10,
                     batch_size=32,
