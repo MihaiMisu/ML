@@ -21,11 +21,14 @@ from skimage.color import rgb2gray
 from scipy import ndimage
 from sklearn.cluster import KMeans
 
+
 # %%   Constans
 # %%
 
 image_name = "1.jpeg"
 image_name = "bon.jpg"
+image_name = "cropped_bon.jpg"
+image_name = "cropped_bon_2.jpg"
 
 # %%   Classes & Functions
 # %%
@@ -101,6 +104,7 @@ pic2show = kmeans.cluster_centers_[kmeans.labels_]
 
 cluster_pic = pic2show.reshape(pic.shape[0], pic.shape[1], pic.shape[2])
 plt.subplot(122), plt.imshow(cluster_pic)
+
 
 # %%   Plotting section
 # %%
