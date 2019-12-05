@@ -21,14 +21,22 @@ from skimage.color import rgb2gray
 from scipy import ndimage
 from sklearn.cluster import KMeans
 
+from os import chdir
+from os.path import dirname, abspath, join
+chdir(dirname(abspath(__file__)))
 
 # %%   Constans
 # %%
 
-image_name = "1.jpeg"
-image_name = "bon.jpg"
-image_name = "cropped_bon.jpg"
-image_name = "cropped_bon_2.jpg"
+imgs_folder = "test_images"
+
+img_name = "1.jpeg"
+# img_name = "bon.jpg"
+# img_name = "bon_v2.jpg"
+img_name = "cropped_bon.jpg"
+# img_name = "cropped_bon_2.jpg"
+
+image_path = join(imgs_folder, img_name)
 
 # %%   Classes & Functions
 # %%
@@ -37,7 +45,7 @@ image_name = "cropped_bon_2.jpg"
 # %%    Main Section
 # %%
 
-image = plt.imread(image_name)
+image = plt.imread(image_path)
 image.shape
 plt.imshow(image)
 
@@ -94,7 +102,7 @@ plt.subplot(132), plt.imshow(out_l, cmap='gray')
 # ----------------------------------------
 # K-means algorithm to segment an image
 
-pic = plt.imread(image_name)/255
+pic = plt.imread(image_path)/255
 plt.close("all")
 plt.subplot(121), plt.imshow(pic)
 

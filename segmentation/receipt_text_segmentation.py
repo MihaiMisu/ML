@@ -7,9 +7,6 @@ Created on %(date)s
 
 @author: %(username)s
 
-Script divided in multiple parts as it can be observed: Imports, Constants,
-etc. The Main Section part is even more divided - each subsection has to be
-run independently by the others to see its result
 
 """
 
@@ -21,16 +18,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy.interpolate import interp1d
-from scipy import signal
+
+from os import chdir
+from os.path import dirname, abspath, join
+chdir(dirname(abspath(__file__)))
 
 # %%   Constans
 # %%
 
-image_name = "1.jpeg"
-#image_name = "bon.jpg"
-#image_name = "bon_v2.jpg"
-image_name = "cropped_bon.jpg"
-#image_name = "cropped_bon_2.jpg"
+imgs_folder = "test_images"
+
+img_name = "1.jpeg"
+# mg_name = "bon.jpg"
+#img_name = "bon_v2.jpg"
+#img_name = "bon_v3.jpg"
+#img_name = "cropped_bon.jpg"
+img_name = "cropped_bon_2.jpg"
+
+image_path = join(imgs_folder, img_name)
 
 # %%   Classes & Functions
 # %%
@@ -65,7 +70,7 @@ def binarize_8bit_gray_img(img):
 
 # Seggmentation with integral projection function
 
-image = plt.imread(image_name)
+image = plt.imread(image_path)
 gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 gray_img = binarize_8bit_gray_img(gray_img)
 
@@ -88,9 +93,10 @@ col_axis = np.linspace(0, len(columns_sum)-1, len(columns_sum))
 plt.close('all')
 
 plt.figure()
+plt.subplot(121)
 plt.imshow(image)
 
-fig, ax = plt.subplots()
-ax.imshow(gray_img, cmap='gray')
-ax.plot(new_rows, linewidth=2, color='firebrick')
-ax.plot(new_cols, col_axis, color='m')
+plt.subplot(122)
+plt.imshow(gray_img, cmap='gray')
+plt.plot(new_rows, linewidth=2, color='firebrick')
+plt.plot(new_cols, col_axis, color='m')
