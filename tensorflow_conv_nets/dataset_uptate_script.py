@@ -8,6 +8,8 @@ Created on Sun Oct 13 11:24:02 2019
 
 import os
 
+from shutil import copyfile
+
 no_files_to_copu = 1000
 training_set_path = "../P16-Convolutional-Neural-Networks/Convolutional_Neural_Networks/dataset/training_set"
 dst_path = os.getcwd()
@@ -27,24 +29,33 @@ for fld in folder:
     cnt_val = 0
     cnt_train = 0
     for file in get_file(src_path):
-        if cnt_val < 1000:
+        if cnt_val < 1001:
             if "cat" in file:
                 cmd = F"cp {os.path.join(src_path, file)} {os.path.join(dst_path, dst_validation_folder, 'cats' ,file)}"
+#                print(cmd)
+                copyfile(os.path.join(src_path, file), os.path.join(dst_path, dst_validation_folder, 'cats' ,file))
 #                os.system(cmd)
             elif "dog":
                 cmd = F"cp {os.path.join(src_path, file)} {os.path.join(dst_path, dst_validation_folder, 'dogs', file)}"
+#                print(cmd)
+                copyfile(os.path.join(src_path, file), os.path.join(dst_path, dst_validation_folder, 'dogs', file))
 #                os.system(cmd)
             cnt_val += 1
         else:
             if "cat" in file:
                 cmd = F"cp {os.path.join(src_path, file)} {os.path.join(dst_path, dst_training_folder, 'cats' ,file)}"
+#                print(cmd)
+                copyfile(os.path.join(src_path, file), os.path.join(dst_path, dst_training_folder, 'cats' ,file))
 #                os.system(cmd)
             elif "dog":
                 cmd = F"cp {os.path.join(src_path, file)} {os.path.join(dst_path, dst_training_folder, 'dogs', file)}"
+#                print(cmd)
+                copyfile(os.path.join(src_path, file), os.path.join(dst_path, dst_training_folder, 'dogs', file))
 #                os.system(cmd)
             cnt_train += 1
-    print(cnt_val)
-    print(cnt_train)
+
+    print(F"Validation files: {cnt_val}")
+    print(F"Training files: {cnt_train}")
 
 
 

@@ -215,7 +215,7 @@ model = build_augumented_model()
 history3 = model.fit_generator(
         train_gen,
         steps_per_epoch=300,
-        epochs=80,
+        epochs=45,
         validation_data=validation_gen,
         validation_steps=100)
 model.save('cats_and_dogs_small_3.h5')
@@ -228,6 +228,7 @@ history_of_net_train = {
         "history3": {"details": "Net trained for 80 epochs with augmented data",
                      "history": history3}
     }
+
 
 #%%
 #%%
@@ -245,14 +246,16 @@ epochs = range(1, len(acc) + 1)
 #val_loss = [0.6748, 0.6704, 0.7885, 0.5909, 0.5775, 0.5843, 0.5546, 0.5568, 0.5679, 0.5197, 0.5419, 0.5369, 0.4942, 0.51084, 0.473, 0.4706, 0.4752, 0.553, 0.4723, 0.4597, 0.4652, 0.4547, 0.4437, 0.467, 0.4998, 0.428, 0.4817, 0.441, 0.4359, 0.5628, 0.4432, 0.4481, 0.5265, 0.4613, 0.5166, 0.3818, 0.4151, 0.389, 0.3705, 0.3831, 0.4030, 0.5073, 0.4340, 0.3777, 0.3595, 0.3866, 0.3808, 0.3778, 0.3784, 0.3965, 0.3893, 0.3633, 0.3825, 0.3624, 0.3676, 0.3809, 0.4209, 0.37171, 0.4406, 0.4236, 0.3999, 0.361, 0.3908, 0.3341, 0.4573, 0.3403, 0.5713, 0.3945, 0.3327, 0.4095, 0.4097, 0.3658, 0.341, 0.4884, 0.3943, 0.3202, 0.3428, 0.3977, 0.3581, 0.3581]
 
 plt.close("all")
-plt.plot(epochs, acc, 'bo', label='Training acc')
-plt.plot(epochs, val_acc, 'b', label='Validation acc')
-plt.title('Training and validation accuracy')
+plt.plot(epochs, acc, 'bo', label='antrenare')
+plt.plot(epochs, val_acc, 'b', label='validare')
+plt.title('Evolutia acuratetii in procesele de antrenare si validare')
+plt.xlabel("Epoca")
 plt.legend()
 plt.figure()
-plt.plot(epochs, loss, 'bo', label='Training loss')
-plt.plot(epochs, val_loss, 'b', label='Validation loss')
-plt.title('Training and validation loss')
+plt.plot(epochs, loss, 'bo', label='antrenare')
+plt.plot(epochs, val_loss, 'b', label='validare')
+plt.title('Evolutia pierderilor in procesele de antrenare si validare')
+plt.xlabel("Epoca")
 plt.legend()
 plt.show()
 
