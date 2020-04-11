@@ -74,14 +74,14 @@ def timeit(func):
 @timeit
 def get_images(path: str) -> list:
     """
-    Returns a sorted list of image files from the specified path. Each image
+    Returns a list of image files from the specified path. Each image
     is considered to be a valid one if its extenios is between the predefined
     ones. Sorting method is applied to find the last added file.
     """
     if not isdir(path):
         raise Exception(F"{get_images.__name__}: Invalid path {path}")
-    images = sorted([item for item in listdir(path)
-                    if splitext(item)[-1].lower() in IMG_TYPES])
+    images = [item for item in listdir(path)
+                if splitext(item)[-1].lower() in IMG_TYPES]
     return images
 
 
@@ -196,6 +196,7 @@ def generate_ds_files(src: DirPath, dst: DirStruct) -> None:
     img_cnt = 1
     existing_imgs = get_images(dst["img_dst"])
     if existing_imgs:
+        existing_imgs.sort(key=lambda x: int(x[3: -4]))
         img_cnt = int(splitext(existing_imgs[-1])[0].split("_")[-1]) + 1
 
     annot_file_template_fd = open(ANNOT_CONTENT_TEMAPLATE, "r")

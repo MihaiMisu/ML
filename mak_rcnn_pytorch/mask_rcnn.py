@@ -14,6 +14,8 @@ from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
 from PIL import Image
 from engine import train_one_epoch, evaluate
 
+from os import getcwd
+from os.path import join
 
 class PennFudanDataset(torch.utils.data.Dataset):
     def __init__(self, root, transforms=None):
@@ -21,13 +23,13 @@ class PennFudanDataset(torch.utils.data.Dataset):
         self.transforms = transforms
         # load all image files, sorting them to
         # ensure that they are aligned
-        self.imgs = list(sorted(os.listdir(os.path.join(root, "PNGImages"))))
-        self.masks = list(sorted(os.listdir(os.path.join(root, "PedMasks"))))
+        self.imgs = list(sorted(os.listdir(os.path.join(root, "Images"))))
+        self.masks = list(sorted(os.listdir(os.path.join(root, "Masks"))))
 
     def __getitem__(self, idx):
         # load images ad masks
-        img_path = os.path.join(self.root, "PNGImages", self.imgs[idx])
-        mask_path = os.path.join(self.root, "PedMasks", self.masks[idx])
+        img_path = os.path.join(self.root, "Images", self.imgs[idx])
+        mask_path = os.path.join(self.root, "Masks", self.masks[idx])
         img = Image.open(img_path).convert("RGB")
         # note that we haven't converted the mask to RGB,
         # because each color corresponds to a different instance
@@ -120,6 +122,8 @@ def single_prediction(model, img_path):
     """
 
     img = Image.open(img_path)
+    if img.size[0] > 1500 and img.size[1] > 1200:
+        img = image_resize(img)
     img = TF.to_tensor(img)
 
     model.eval()
@@ -142,19 +146,28 @@ def load_model_from_state_dict(model_path):
 
     return model
 
+
+def image_resize(img):
+    DOWN_SIZE_RATIO = 0.3
+    width, height = img.size
+    width, height = int(width*DOWN_SIZE_RATIO), int(height*DOWN_SIZE_RATIO)
+    img = img.resize((width, height), Image.ANTIALIAS)
+    return img
+
 #    We now have the dataset class, the models and the data transforms. Let's
 # instantiate them
 
+
 if __name__ == '__main__':
     # use our dataset and defined transformations
-    dataset = PennFudanDataset('PennFudanPed', get_transform(train=True))
-    dataset_test = PennFudanDataset('PennFudanPed', get_transform(train=False))
+    dataset = PennFudanDataset('Receipts', get_transform(train=True))
+    dataset_test = PennFudanDataset('Receipts', get_transform(train=False))
 
     # split the dataset in train and test set
     torch.manual_seed(1)
     indices = torch.randperm(len(dataset)).tolist()
-    dataset = torch.utils.data.Subset(dataset, indices[:-50])
-    dataset_test = torch.utils.data.Subset(dataset_test, indices[-50:])
+    dataset = torch.utils.data.Subset(dataset, indices[:45])
+    dataset_test = torch.utils.data.Subset(dataset_test, indices[45:])
 
     # define training and validation data loaders
     data_loader = torch.utils.data.DataLoader(
@@ -162,7 +175,7 @@ if __name__ == '__main__':
         collate_fn=utils.collate_fn)
 
     data_loader_test = torch.utils.data.DataLoader(
-        dataset_test, batch_size=1, shuffle=False, num_workers=4,
+        dataset_test, batch_size=1, shuffle=False, num_workers=0,
         collate_fn=utils.collate_fn)
 
     #    Now let's instantiate the model and the optimizer
@@ -189,7 +202,7 @@ if __name__ == '__main__':
                                                    gamma=0.1)
 
     # let's train it for 10 epochs
-    num_epochs = 3
+    num_epochs = 10
 
     for epoch in range(num_epochs):
         # train for one epoch, printing every 10 iterations
@@ -200,16 +213,19 @@ if __name__ == '__main__':
         evaluate(model, data_loader_test, device=device)
 
 
-    # pick one image from the test set
-    img, _ = dataset_test[0]
-    # put the model in evaluation mode
-    model.eval()
-    with torch.no_grad():
-        prediction = model([img.to(device)])
+#    # pick one image from the test set
+#    img, _ = dataset_test[0]
+#    # put the model in evaluation mode
+#    model.eval()
+#    with torch.no_grad():
+#        prediction = model([img.to(device)])
 
 
-    model = load_model_from_state_dict('pedestrian_model_dict_state.pt')
-    img, pred = single_prediction(model, 'PennFudanPed//test.png')
+#    model = load_model_from_state_dict('pedestrian_model_dict_state.pt')
+    img_path = join(getcwd(), "Receipts", "raw_img_dataset", "IMG_1298.JPG")
+    img_path = join(getcwd(), "Receipts", "Images", "im_51.png")
+    img, pred = single_prediction(model, img_path)
     Image.fromarray(img.mul(255).permute(1, 2, 0).byte().numpy())
     Image.fromarray(pred[0]['masks'][0, 0].mul(255).byte().cpu().numpy())
+
 
